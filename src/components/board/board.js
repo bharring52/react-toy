@@ -2,6 +2,7 @@ import React from 'react';
 import "./board.css";
 import Container from '@material-ui/core/Container';
 import { Cell } from "./cell/cell.js";
+import _ from "lodash";
 
 export class Board extends React.Component {
     constructor(props) {
@@ -21,7 +22,7 @@ export class Board extends React.Component {
             { length: this.rows },
             () => Array.from(
                 { length: this.columns },
-                () => this.getStartingCell(0.25)
+                () => this.getStartingCell(0.50)
             )
         );
     }
@@ -33,20 +34,20 @@ export class Board extends React.Component {
     }
 
     passTurn = () => {
-        const currentCells = this.state.cells;
+        const nextGeneration = _.cloneDeep(this.state.cells);
 
-        currentCells.forEach(row => row.forEach(cell => 
+        nextGeneration.forEach(row => row.forEach(cell => 
             cell.wasAlive = cell.isAlive
         ));
 
-        currentCells.forEach(row => row.forEach(cell =>
-            cell.isAlive = this.willBeAlive(currentCells, cell)
+        nextGeneration.forEach(row => row.forEach(cell =>
+            cell.isAlive = this.willBeAlive(nextGeneration, cell)
         ));
 
-        this.setState(currentCells);
+        this.setState({ cells: nextGeneration });
     }
 
-    willBeAlive = (cells, cell) => {
+    willBeAlive(cells, cell) {
         const livingNeighbors = this.getNeighbors(cells, cell)
             .filter(neighbor => neighbor.wasAlive)
             .length;
@@ -84,8 +85,6 @@ export class Board extends React.Component {
     }
 
     render() {
-        console.log('rendering');
-
         return (
             <Container>
                 <div className="board">
@@ -108,7 +107,7 @@ export class Board extends React.Component {
 
     renderCell(cell, cellIndex){
         return (
-            <Cell cell={cell} key={cellIndex}>fallback</Cell>
+            <Cell isAlive={cell.isAlive} key={cellIndex}>fallback</Cell>
         );
     };
 }
