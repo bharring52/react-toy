@@ -19,3 +19,11 @@
 
     flex: 1;
 }
+
+.board .row .cell.alive {
+    background-color: greenyellow;
+}
+
+.board .row .cell.dead {
+    background-color: red;
+}
