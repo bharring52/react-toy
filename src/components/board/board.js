@@ -9,16 +9,15 @@ export class Board extends React.Component {
 
         this.rows = this.props.rows || 5;
         this.columns = this.props.columns || 5;
+
+        this.state = {
+            cells: this.getInitialBoard()
+        };
+
     }
 
-    populate() {
-        this.fillInitialBoard();
-
-        this.assignNeighbors();
-    }
-
-    fillInitialBoard() {
-        this.cells = Array.from(
+    getInitialBoard() {
+        return Array.from(
             { length: this.rows },
             () => Array.from(
                 { length: this.columns },
@@ -33,15 +32,38 @@ export class Board extends React.Component {
         }
     }
 
-    assignNeighbors() {
-        for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.columns; j++) {
-                this.cells[i][j].neighbors = this.getNeighbors(i, j);
-            }
-        }
+    passTurn = () => {
+        const currentCells = this.state.cells;
+
+        currentCells.forEach(row => row.forEach(cell => 
+            cell.wasAlive = cell.isAlive
+        ));
+
+        currentCells.forEach(row => row.forEach(cell =>
+            cell.isAlive = this.willBeAlive(currentCells, cell)
+        ));
+
+        this.setState(currentCells);
     }
 
-    getNeighbors(row, column) {
+    willBeAlive = (cells, cell) => {
+        const livingNeighbors = this.getNeighbors(cells, cell)
+            .filter(neighbor => neighbor.wasAlive)
+            .length;
+
+        return livingNeighbors === 3
+            || (livingNeighbors === 2 && cell.wasAlive);
+    }
+
+    getNeighbors(cells, cell) {
+        const row = cells.find(row => row.indexOf(cell) > -1);
+        const rowIndex = cells.indexOf(row);
+        const columnIndex = row.indexOf(cell);
+
+        return this.getNeighborsByIndex(cells, rowIndex, columnIndex);
+    }
+
+    getNeighborsByIndex(cells, row, column) {
         const modifiers = [-1, 0, 1];
 
         const neighbors = modifiers
@@ -50,45 +72,24 @@ export class Board extends React.Component {
             .flat()
             .filter(cell =>
                 cell.row !== row
-                && cell.column !== column)
+                || cell.column !== column)
             .filter(cell =>
-                cell.row in this.cells
-                && cell.column in this.cells[cell.row]
+                cell.row in cells
+                && cell.column in cells[cell.row]
                 );
 
         return neighbors.map(neighbor => 
-            this.cells[neighbor.row][neighbor.column]
+            cells[neighbor.row][neighbor.column]
             );
     }
 
-    passTurn = () => {
-        this.cells.forEach(row => row.forEach(cell => 
-            cell.wasAlive = cell.isAlive
-        ));
-
-        this.cells.forEach(row => row.forEach(cell =>
-            cell.isAlive = this.willBeAlive(cell)
-        ));
-
-        alert('this happened');
-    }
-
-    willBeAlive = (cell) => {
-        const livingNeighbors = cell.neighbors
-            .filter(neighbor => neighbor.wasAlive)
-            .length;
-
-        return livingNeighbors === 3
-            || (livingNeighbors === 2 && cell.wasAlive);
-    }
-
     render() {
-        this.populate();
+        console.log('rendering');
 
         return (
             <Container>
                 <div className="board">
-                    {this.cells.map((row, i) => this.renderRow(row, i))}
+                    {this.state.cells.map((row, i) => this.renderRow(row, i))}
                 </div>
                 <button onClick={this.passTurn}>Step</button>
             </Container>

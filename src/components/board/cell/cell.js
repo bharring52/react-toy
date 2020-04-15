@@ -4,13 +4,15 @@ export class Cell extends React.Component {
     constructor(props) {
         super(props);
 
-        this.cell = props.cell || {};
+        this.state = {
+            cell: props.cell || {}
+        };
     }
 
     render () {
         return (
             <div className="cell">
-                {this.cell.isAlive ? "Alive" : ""}
+                {this.state.cell.isAlive ? "Alive" : ""}
             </div>
         );
     }
