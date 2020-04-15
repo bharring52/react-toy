@@ -1,18 +1,19 @@
 import React from 'react';
 import "./board.css";
 import { Space } from "./space/space.js";
+import Grid from '@material-ui/core/Grid';
 
 export class Board extends React.Component {
     constructor(props) {
         super(props);
 
-        this.rows = 5;
-        this.columns = 10;
+        this.rows = 8;
+        this.columns = 8;
     }
 
     populate() {
         this.spaces = Array(this.rows).fill(
-            Array(this.columns).fill({})
+            Array(this.columns).fill({someprop: 'someval'})
         );
     }
 
@@ -37,6 +38,8 @@ export class Board extends React.Component {
     }
 
     renderSpace(space, key){
-        return <Space space={space} key={key}>fallback</Space>
+        return (
+            <Space space={space} key={key}>fallback</Space>
+        );
     };
 }
