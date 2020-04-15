@@ -1,4 +1,5 @@
 import React from 'react';
+import "./board.css";
 import { Space } from "./space/space.js";
 
 export class Board extends React.Component {

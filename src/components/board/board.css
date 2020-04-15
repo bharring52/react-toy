@@ -1,0 +1,13 @@
+.board {
+    display: table;
+    border: 2px solid black;
+}
+
+.board .row {
+    display: table-row;
+}
+
+.board .row .space {
+    display: table-cell;
+    border: 1px solid grey;
+}
