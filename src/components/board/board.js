@@ -1,14 +1,13 @@
 import React from 'react';
 import "./board.css";
 import { Space } from "./space/space.js";
-import Grid from '@material-ui/core/Grid';
 
 export class Board extends React.Component {
     constructor(props) {
         super(props);
 
-        this.rows = 8;
-        this.columns = 8;
+        this.rows = this.props.rows || 8;
+        this.columns = this.props.columns || 8;
     }
 
     populate() {
