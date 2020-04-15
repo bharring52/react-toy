@@ -7,7 +7,9 @@ export class Cell extends React.Component {
             : 'cell dead';
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                onClick={() => this.props.onClick()}>
             </div>
         );
     }

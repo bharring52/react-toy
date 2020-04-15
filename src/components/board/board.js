@@ -2,26 +2,27 @@ import React from 'react';
 import "./board.css";
 import Container from '@material-ui/core/Container';
 import { Cell } from "./cell/cell.js";
+import { Controls } from "./controls.js";
 import _ from "lodash";
 
 export class Board extends React.Component {
     constructor(props) {
         super(props);
 
-        this.rows = this.props.rows || 5;
-        this.columns = this.props.columns || 5;
-
         this.state = {
-            cells: this.getInitialBoard()
+            cells: this.getNewBoard(
+                this.props.rows || 5,
+                this.props.columns || 5
+            )
         };
 
     }
 
-    getInitialBoard() {
+    getNewBoard(rows, columns) {
         return Array.from(
-            { length: this.rows },
+            { length: rows },
             () => Array.from(
-                { length: this.columns },
+                { length: columns },
                 () => this.getStartingCell(0.50)
             )
         );
@@ -84,9 +85,27 @@ export class Board extends React.Component {
             );
     }
 
+    handleCellClick = (row, column) => {
+        const cells = _.cloneDeep(this.state.cells);
+
+        cells[row][column].isAlive = !cells[row][column].isAlive;
+
+        this.setState({ cells: cells});
+    }
+
+    handleControlsSubmit = (rows, columns) => {
+        this.setState({
+            cells: this.getNewBoard(rows, columns)
+        });
+    }
+
     render() {
         return (
             <Container>
+                <Controls
+                    rows={this.props.rows}
+                    columns={this.props.columns}
+                    onClick={this.handleControlsSubmit} />
                 <div className="board">
                     {this.state.cells.map((row, i) => this.renderRow(row, i))}
                 </div>
@@ -99,15 +118,20 @@ export class Board extends React.Component {
         return (
             <div className="row" key={rowIndex}>
                 {row.map((cell, cellIndex) =>
-                    this.renderCell(cell, cellIndex)
+                    this.renderCell(cell, rowIndex, cellIndex)
                 )}
             </div>
         );
     }
 
-    renderCell(cell, cellIndex){
+    renderCell(cell, rowIndex, cellIndex){
         return (
-            <Cell isAlive={cell.isAlive} key={cellIndex}>fallback</Cell>
+            <Cell
+                isAlive={cell.isAlive}
+                key={cellIndex}
+                onClick={() => this.handleCellClick(rowIndex, cellIndex)}>
+                fallback
+            </Cell>
         );
     };
 }
