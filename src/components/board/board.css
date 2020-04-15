@@ -14,7 +14,7 @@
     flex-direction: row;
 }
 
-.board .row .space {
+.board .row .cell {
     border: 1px solid grey;
 
     flex: 1;
